@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { FaWhatsapp, FaFacebookF } from "react-icons/fa";
+import { FaWhatsapp } from "react-icons/fa";
 import { Mail, Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -14,6 +14,14 @@ export default function Navbar() {
     window.addEventListener("scroll", onScroll);
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  useEffect(() => {
+    if (open) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+  }, [open]);
 
   const links = [
     { href: "#hero", label: "الرئيسية" },
@@ -29,7 +37,7 @@ export default function Navbar() {
         "fixed top-0 inset-x-0 z-999 transition-all duration-300 border-b border-white/5",
         scrolled
           ? "backdrop-blur-xl bg-black/70"
-          : "bg-linear-to-b from-black/70 via-black/30 to-transparent"
+          : "bg-linear-to-b from-black/70 via-black/30 to-transparent",
       )}
     >
       <div className="mx-auto max-w-6xl px-4 lg:px-8 h-16 flex items-center justify-between">
@@ -37,8 +45,6 @@ export default function Navbar() {
           <img
             src="/meta/icon.png"
             alt="Logo"
-            width={90}
-            height={90}
             className="object-contain w-9 h-auto"
           />
         </a>
@@ -58,7 +64,7 @@ export default function Navbar() {
 
         <div className="flex items-center gap-3">
           <a
-            href="https://wa.me/218915290390"
+            href="https://wa.me/218911533465"
             target="_blank"
             rel="noopener noreferrer"
             className="border rounded-full p-2 flex items-center justify-center transition-colors duration-300 hover:bg-green-500"
@@ -67,16 +73,7 @@ export default function Navbar() {
           </a>
 
           <a
-            href="https://www.facebook.com/FactoryAlbakoush"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="border rounded-full p-2 flex items-center justify-center transition-colors duration-300 hover:bg-blue-500"
-          >
-            <FaFacebookF className="w-4 h-4 text-white" />
-          </a>
-
-          <a
-            href="mailto:info@bks.ly"
+            href="mailto:info@myperfume.com.ly"
             target="_blank"
             rel="noopener noreferrer"
             className="border rounded-full p-2 flex items-center justify-center transition-colors duration-300 hover:bg-gray-500"
@@ -94,7 +91,7 @@ export default function Navbar() {
       </div>
 
       {open && (
-        <div className="fixed inset-0 z-999 bg-black/90 backdrop-blur-xl flex flex-col items-center justify-center gap-8 text-white text-xl">
+        <div className="fixed inset-0 z-999 bg-black/90 backdrop-blur-xl flex flex-col items-center justify-start pt-24 px-6 gap-8 text-white text-xl overflow-y-auto">
           <button
             onClick={() => setOpen(false)}
             className="absolute top-5 right-5 p-2 rounded-full border"
@@ -102,16 +99,18 @@ export default function Navbar() {
             <X className="w-6 h-6" />
           </button>
 
-          {links.map((l) => (
-            <a
-              key={l.href}
-              href={l.href}
-              className="hover:text-sky-400 transition"
-              onClick={() => setOpen(false)}
-            >
-              {l.label}
-            </a>
-          ))}
+          <div className="w-full max-w-sm flex flex-col items-center gap-6">
+            {links.map((l) => (
+              <a
+                key={l.href}
+                href={l.href}
+                className="hover:text-sky-400 transition"
+                onClick={() => setOpen(false)}
+              >
+                {l.label}
+              </a>
+            ))}
+          </div>
         </div>
       )}
     </header>

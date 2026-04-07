@@ -3,8 +3,12 @@
 import { motion } from "framer-motion";
 import { MapPin, Send } from "lucide-react";
 import { Separator } from "./ui/separator";
+import { useState } from "react";
 
 export default function Contact() {
+  const [loading, setLoading] = useState(false);
+  const [sent, setSent] = useState(false);
+  const [error, setError] = useState("");
   const branches = [
     {
       name: "فرع مصراتة",
@@ -27,6 +31,36 @@ export default function Contact() {
       address: "شارع الوحدة، مبنى رقم 3، سبها، ليبيا",
     },
   ];
+
+  const handleSubmit = async (e: any) => {
+    e.preventDefault();
+    setLoading(true);
+    setSent(false);
+    setError("");
+
+    const form = e.currentTarget;
+    const data = new FormData(form);
+    data.append("to", "info@myperfume.com.ly");
+
+    try {
+      const res = await fetch("https://relay.eratech.com.ly/send", {
+        method: "POST",
+        body: data,
+      });
+
+      const text = await res.text();
+      if (text.includes("OK")) {
+        setSent(true);
+        form.reset();
+      } else {
+        setError("فشل إرسال الرسالة");
+      }
+    } catch {
+      setError("خطأ في الاتصال بالخادم");
+    }
+
+    setLoading(false);
+  };
 
   return (
     <section
@@ -65,21 +99,7 @@ export default function Contact() {
       <div className="mx-auto max-w-6xl px-2 relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-5 items-stretch h-full">
         {/* CONTACT FORM */}
         <motion.form
-          onSubmit={async (e) => {
-            e.preventDefault();
-            const formData = new FormData(e.currentTarget);
-
-            const res = await fetch("https://bks.ly/contact-mail.php", {
-              method: "POST",
-              body: formData,
-            });
-
-            const data = await res.json();
-            if (data.success) {
-              alert("تم إرسال رسالتك بنجاح!");
-              e.currentTarget.reset();
-            }
-          }}
+          onSubmit={handleSubmit}
           initial={{ opacity: 0, x: 40 }}
           whileInView={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8 }}
@@ -121,6 +141,15 @@ export default function Contact() {
               px-4 py-3 text-lg focus:outline-none focus:border-[#d6b570] transition"
           />
 
+          {sent && (
+            <p className="text-green-700 text-sm font-semibold">
+              تم إرسال الرسالة بنجاح ✔
+            </p>
+          )}
+          {error && (
+            <p className="text-red-600 text-sm font-semibold">{error}</p>
+          )}
+
           <button
             type="submit"
             className="
@@ -128,8 +157,9 @@ export default function Contact() {
               text-black font-semibold text-lg flex items-center justify-center gap-2
               hover:opacity-90 transition shadow-[0_0_25px_rgba(214,181,112,0.3)]
             "
+            disabled={loading}
           >
-            إرسال
+            {loading ? "جاري الإرسال..." : "إرسال الرسالة"}
             <Send size={20} />
           </button>
         </motion.form>
